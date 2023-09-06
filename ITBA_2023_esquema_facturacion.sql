@@ -1,5 +1,6 @@
--- create database mri2022bd2;
--- use mri2022bd2;
+\timing
+--create database mri2022bd2;
+--use mri2022bd2;
 
 --
 
@@ -17,9 +18,9 @@
 
 
 
--- 
+--
 
--- TABLE: E01_CLIENTE 
+-- TABLE: E01_CLIENTE
 
 --
 
@@ -49,9 +50,9 @@ CREATE TABLE E01_CLIENTE(
 
 
 
--- 
+--
 
--- TABLE: E01_DETALLE_FACTURA 
+-- TABLE: E01_DETALLE_FACTURA
 
 --
 
@@ -79,9 +80,9 @@ CREATE TABLE E01_DETALLE_FACTURA(
 
 
 
--- 
+--
 
--- TABLE: E01_FACTURA 
+-- TABLE: E01_FACTURA
 
 --
 
@@ -95,7 +96,7 @@ CREATE TABLE E01_FACTURA(
 
     total_sin_iva    DOUBLE PRECISION     NOT NULL,
 
-    iva              DOUBLE PRECISION    NOT NULL,
+    iva              DOUBLE PRECISION     NOT NULL,
 
     total_con_iva    DOUBLE PRECISION,
 
@@ -113,9 +114,9 @@ CREATE TABLE E01_FACTURA(
 
 
 
--- 
+--
 
--- TABLE: E01_PRODUCTO 
+-- TABLE: E01_PRODUCTO
 
 --
 
@@ -147,9 +148,9 @@ CREATE TABLE E01_PRODUCTO(
 
 
 
--- 
+--
 
--- TABLE: E01_TELEFONO 
+-- TABLE: E01_TELEFONO
 
 --
 
@@ -177,9 +178,9 @@ CREATE TABLE E01_TELEFONO(
 
 
 
--- 
+--
 
--- TABLE: E01_DETALLE_FACTURA 
+-- TABLE: E01_DETALLE_FACTURA
 
 --
 
@@ -194,7 +195,7 @@ ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_PRODUCTO
 
 
 
-ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_FACTURA 
+ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_FACTURA
 
     FOREIGN KEY (nro_factura)
 
@@ -206,15 +207,15 @@ ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_FACTURA
 
 
 
--- 
+--
 
--- TABLE: E01_FACTURA 
+-- TABLE: E01_FACTURA
 
 --
 
 
 
-ALTER TABLE E01_FACTURA ADD CONSTRAINT FK_E01_FACTURA_CLIENTE 
+ALTER TABLE E01_FACTURA ADD CONSTRAINT FK_E01_FACTURA_CLIENTE
 
     FOREIGN KEY (nro_cliente)
 
@@ -226,15 +227,15 @@ ALTER TABLE E01_FACTURA ADD CONSTRAINT FK_E01_FACTURA_CLIENTE
 
 
 
--- 
+--
 
--- TABLE: E01_TELEFONO 
+-- TABLE: E01_TELEFONO
 
 --
 
 
 
-ALTER TABLE E01_TELEFONO ADD CONSTRAINT FK_E01_TELEFONO_CLIENTE 
+ALTER TABLE E01_TELEFONO ADD CONSTRAINT FK_E01_TELEFONO_CLIENTE
 
     FOREIGN KEY (nro_cliente)
 
@@ -580,7 +581,7 @@ INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock)
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (32,'Montes Nascetur Incorporated','cosmetics','purus. Nullam scelerisque','926.60',203);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (33,'Turpis Nulla Corp.',' drugstore ','pede, nonummy ut,','472.49',496);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (34,'Eu Eleifend Nec Associates','canned goods','orci sem eget','715.37',676);
-INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (35,'Euismod Incorporated','chemists','enim. Nunc ut','762.66',139);
+INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (35,'Euismod Incorporated',E'chemist\'s ','enim. Nunc ut','762.66',139);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (36,'Congue A Aliquet Corp.','sales assistant','diam nunc, ullamcorper','758.82',778);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (37,'Sed Dui Fusce LLC','coin','eleifend nec, malesuada','282.07',954);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (38,'Arcu Incorporated','bag','justo eu arcu.','53.83',681);
@@ -3055,71 +3056,63 @@ INSERT INTO E01_DETALLE_FACTURA (nro_factura,codigo_producto,nro_item,cantidad) 
 INSERT INTO E01_DETALLE_FACTURA (nro_factura,codigo_producto,nro_item,cantidad) VALUES (253,34,2893,1);
 INSERT INTO E01_DETALLE_FACTURA (nro_factura,codigo_producto,nro_item,cantidad) VALUES (251,45,2894,45);
 
-UPDATE e01_factura 
-SET 
+UPDATE e01_factura
+SET
     total_sin_iva = 0
 WHERE
     nro_factura < 1000;
 
---     DELIMITER $$
--- CREATE PROCEDURE calcular_precios ()
--- begin
--- declare v_nro_factura integer default 0;
--- declare v_codigo_producto integer default 0;
--- declare v_cantidad float default 0;
--- declare v_precio DOUBLE  default 0;
--- declare v_total_sin_iva DOUBLE  default 0;
--- declare v_precio_final DOUBLE  default 0;
--- declare v_total_con_iva DOUBLE  default 0;
--- DECLARE fin INTEGER DEFAULT 0;
--- declare cFacturasIVA cursor for select nro_factura,total_sin_iva from e01_factura;
--- declare cFacturas cursor for select total_sin_iva from e01_factura where nro_factura=v_nro_factura;
--- declare cProducto cursor for select precio from e01_producto where codigo_producto = v_codigo_producto;
--- declare cDetalleFactura cursor for select codigo_producto, cantidad, nro_factura from e01_detalle_factura;
--- DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
--- open cDetalleFactura;
---   get_facturas: LOOP
---     FETCH cDetalleFactura INTO v_codigo_producto,v_cantidad,v_nro_factura;
---     IF fin = 1 THEN
---        LEAVE get_facturas;
---     END IF;
--- 	open cProducto;
--- 	FETCH cProducto INTO v_precio;
--- 	IF v_cantidad>10 THEN
--- 		SET v_precio_final=v_precio*0.9*v_cantidad;
--- 		elseif v_cantidad>5 THEN
--- 			SET v_precio_final=v_precio*0.95*v_cantidad;
--- 		ELSE
--- 			SET v_precio_final=v_precio*v_cantidad;
---
--- 	END IF;
--- 	CLOSE cProducto;
--- 	open cFacturas;
--- 	FETCH cFacturas INTO v_total_sin_iva;
--- 	SET v_precio_final = v_precio_final + v_total_sin_iva;
--- 	UPDATE e01_factura
--- SET
---     total_sin_iva = v_precio_final
--- WHERE
---     nro_factura = v_nro_factura;
--- 	close cFacturas;
---   END LOOP get_facturas;
---   CLOSE cDetalleFactura;
--- 	open cFacturasIVA;
---     SET fin=0;
--- get_facturas_iva: LOOP
--- 	fetch cFacturasIVA into v_nro_factura,v_total_sin_iva;
--- 	IF fin = 1 THEN
---        LEAVE get_facturas_iva;
---     END IF;
--- 	set v_total_con_iva = v_total_sin_iva + v_total_sin_iva*0.21;
--- 	UPDATE e01_factura
--- SET
---     total_con_iva = v_total_con_iva
--- WHERE
---     nro_factura = v_nro_factura;
--- 	END LOOP get_facturas_iva;
--- 	CLOSE cFacturasIVA;
---  END $$
---  DELIMITER ;
--- call calcular_precios () ;
+CREATE OR REPLACE PROCEDURE calcular_precios() AS $$
+DECLARE
+    v_nro_factura INTEGER DEFAULT 0;
+    v_codigo_producto INTEGER DEFAULT 0;
+    v_cantidad FLOAT DEFAULT 0;
+    v_precio DOUBLE PRECISION  DEFAULT 0;
+    v_total_sin_iva DOUBLE PRECISION  DEFAULT 0;
+    v_precio_final DOUBLE PRECISION  DEFAULT 0;
+    v_total_con_iva DOUBLE PRECISION  DEFAULT 0;
+    cFacturasIVA CURSOR FOR SELECT nro_factura,total_sin_iva FROM e01_factura;
+    cFacturas CURSOR FOR SELECT total_sin_iva FROM e01_factura WHERE nro_factura=v_nro_factura;
+    cProducto CURSOR FOR SELECT precio FROM e01_producto WHERE codigo_producto = v_codigo_producto;
+    cDetalleFactura CURSOR FOR SELECT codigo_producto, cantidad, nro_factura FROM e01_detalle_factura;
+BEGIN
+    FOR detalleFactura IN cDetalleFactura LOOP
+        v_codigo_producto := detalleFactura.codigo_producto;
+        v_cantidad := detalleFactura.cantidad;
+        v_nro_factura := detalleFactura.nro_factura;
+        FOR producto IN cProducto LOOP
+            v_precio := producto.precio;
+            IF v_cantidad>10 THEN
+                v_precio_final := v_precio*0.9*v_cantidad;
+            ELSEIF v_cantidad>5 THEN
+                v_precio_final := v_precio*0.95*v_cantidad;
+            ELSE
+                v_precio_final := v_precio*v_cantidad;
+            END IF;
+        END LOOP;
+
+        FOR factura IN cFacturas LOOP
+            v_total_sin_iva := factura.total_sin_iva;
+            v_precio_final := v_precio_final + v_total_sin_iva;
+            UPDATE e01_factura
+            SET
+                total_sin_iva = v_precio_final
+            WHERE
+                nro_factura = v_nro_factura;
+        END LOOP;
+    END LOOP;
+
+    FOR facturaIva IN cFacturasIVA LOOP
+        v_nro_factura := facturaIva.nro_factura;
+        v_total_sin_iva := facturaIva.total_sin_iva;
+        v_total_con_iva := v_total_sin_iva + v_total_sin_iva*0.21;
+        UPDATE e01_factura
+        SET
+            total_con_iva = v_total_con_iva
+        WHERE
+            nro_factura = v_nro_factura;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+CALL calcular_precios () ;
