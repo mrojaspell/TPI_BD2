@@ -48,8 +48,33 @@ function validate_client(body){
     return ClientCodes.Valid;
 }
 
+function validate_update(body){
+    if(typeof(body['nombre']) !== 'string'){
+        return ClientCodes.InvalidNameType;
+    }
+    if(body['nombre'].length > 44){
+        return ClientCodes.InvalidNameLength;
+    }
+    if(typeof(body['apellido']) !== 'string'){
+        return ClientCodes.InvalidSurnameType;
+    }
+    if(body['apellido'].length > 44){
+        return ClientCodes.InvalidSurnameLength;
+    }
+    if(typeof(body['direccion']) !== 'string'){
+        return ClientCodes.InvalidAddressType;
+    }
+    if(body['direccion'].length > 44){
+        return ClientCodes.InvalidAddressLength;
+    }
+    if(typeof(body['activo']) !== 'number' || (body['activo'] !== 0 && body['activo'] !== 1)){
+        return ClientCodes.InvalidActiveType;
+    }
+    return ClientCodes.Valid;
+}
 
 // Metodos de API
+//get all clients
 app.get('/clients', async(req, res) => {
     try{
         const values = await pool.query(
@@ -63,7 +88,30 @@ app.get('/clients', async(req, res) => {
         res.status(500).send()
     }
 })
+//get client
+app.get('clients/:id', async (req, res) => {
+    try{
+        const { id } = req.params
+        const values = await pool.query(
+            'SELECT * FROM e01_cliente WHERE nro_cliente = $1', [
+                id
+            ]
+        )
+        if(values.rowCount === 1){
+            res.json(values.rows[0])
+        }
+        else{
+            res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+        }
 
+    } catch (e) {
+        console.log(e)
+        res.status(500).send()
+    }
+})
+
+
+//delete client
 app.delete('/clients/:id', async (req, res) => {
     try{
         const { id } = req.params
@@ -84,7 +132,7 @@ app.delete('/clients/:id', async (req, res) => {
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
-
+//create client
 app.post('/clients', async (req, res) => {
     try{
         const input_check = validate_client(req.body)
@@ -105,6 +153,34 @@ app.post('/clients', async (req, res) => {
     }
 })
 
+//update client
+app.put('/clients/:id', async (req, res) => {
+    try {
+        const { id }  = req.params
+        const input_check = validate_update(req.body)
+
+        if(input_check === ClientCodes.Valid){
+            const resp = await pool.query(
+                'UPDATE e01_cliente SET nombre = $2, apellido = $3, direccion = $4, activo = $5 WHERE nro_cliente = $1',
+                [id, req.body['nombre'], req.body['apellido'], req.body['direccion'], req.body['activo']]
+            )
+            if(resp.rowCount === 1){
+                res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
+            }
+            else{
+                res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+            }
+        }
+        else{
+            res.status(400).send({respuesta: input_check[MESSAGE]})
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto  
+    }
+    
+})
 
 
 // Inicio el servidor
