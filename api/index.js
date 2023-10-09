@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const PORT = 8080
+
+const config = require('./config.json')
 const pool = require('./db')
 
 // Aplicamos Json middleware: convierte el body de las request a JSON
@@ -259,6 +260,6 @@ app.put('/productos/:id', async (req, res) => {
 
 //  = - = - = - = - = Inicio el servidor = - = - = - = - =
 app.listen(
-    PORT,
-    () => {console.log(`Server running at: http://localhost:${PORT}`)}
+    config['port'],
+    () => {console.log(`Server running at: http://localhost:${config['port']}`)}
 )
