@@ -6,6 +6,8 @@ const pool = require('./db')
 // Aplicamos Json middleware: convierte el body de las request a JSON
 app.use(express.json())
 
+// = - = - = - = - = Codigos de errores = - = - = - = - =
+
 const ClientCodes = {
     InvalidIdType: [1, 'Tipo invalido de: nro_cliente. Tipo esperado: integer.'],
     InvalidNameType: [2, 'Tipo invalido de: nombre. Tipo esperado: string.'],
@@ -32,8 +34,10 @@ const ProductCodes = {
 const MESSAGE = 1
 const CODE = 0
 
+// = - = - = - = - = Funciones de validacion = - = - = - = - =
+
 function validate_client(body){
-    if(typeof(body['nro_cliente']) !== 'number' || body['nro_cliente']%1 !== 0){
+    if(typeof(body['nro_cliente']) !== 'number' || body['nro_cliente'] % 1 !== 0){
         return ClientCodes.InvalidIdType;
     }
     if(typeof(body['nombre']) !== 'string'){
@@ -60,33 +64,8 @@ function validate_client(body){
     return ClientCodes.Valid;
 }
 
-function validate_client_update(body){
-    if(typeof(body['nombre']) !== 'string'){
-        return ClientCodes.InvalidNameType;
-    }
-    if(body['nombre'].length > 44){
-        return ClientCodes.InvalidNameLength;
-    }
-    if(typeof(body['apellido']) !== 'string'){
-        return ClientCodes.InvalidSurnameType;
-    }
-    if(body['apellido'].length > 44){
-        return ClientCodes.InvalidSurnameLength;
-    }
-    if(typeof(body['direccion']) !== 'string'){
-        return ClientCodes.InvalidAddressType;
-    }
-    if(body['direccion'].length > 44){
-        return ClientCodes.InvalidAddressLength;
-    }
-    if(typeof(body['activo']) !== 'number' || (body['activo'] !== 0 && body['activo'] !== 1)){
-        return ClientCodes.InvalidActiveType;
-    }
-    return ClientCodes.Valid;
-}
-
  function validate_product(body){
-    if(typeof(body['codigo_producto']) !== 'number' || body['codigo_producto']%1 !== 0){
+    if(typeof(body['codigo_producto']) !== 'number' || body['codigo_producto'] % 1 !== 0){
         return ProductCodes.InvalidIdType;
     }
     if(typeof(body['marca']) !== 'string'){
@@ -110,43 +89,16 @@ function validate_client_update(body){
     if(typeof(body['precio']) !== 'number'){
         return ProductCodes.InvalidPriceType;
     }
-    if(typeof(body['stock']) !== 'number' || body['stock']%1 !== 0){
+    if(typeof(body['stock']) !== 'number' || body['stock'] % 1 !== 0){
         return ProductCodes.InvalidStockType;
     }
     return ProductCodes.Valid;
  }
 
- function validate_product_update(body){
-    if(typeof(body['marca']) !== 'string'){
-        return ProductCodes.InvalidBrandType;
-    }
-    if(body['marca'].length > 44){
-        return ProductCodes.InvalidBrandLength;
-    }
-    if(typeof(body['nombre']) !== 'string'){
-        return ProductCodes.InvalidNameType;
-    }
-    if(body['nombre'].length > 44){
-        return ProductCodes.InvalidNameLength;
-    }
-    if(typeof(body['descripcion']) !== 'string'){
-        return ProductCodes.InvalidDescriptionType;
-    }
-    if(body['descripcion'].length > 44){
-        return ProductCodes.InvalidDescriptionLength;
-    }
-    if(typeof(body['precio']) !== 'number'){
-        return ProductCodes.InvalidPriceType;
-    }
-    if(typeof(body['stock']) !== 'number' || body['stock']%1 !== 0){
-        return ProductCodes.InvalidStockType;
-    }
-    return ProductCodes.Valid;
- }
+// = - = - = - = - = Metodos de API = - = - = - = - =
 
-// Metodos de API
-//get all clients
-app.get('/clients', async(req, res) => {
+// Get all clients
+app.get('/clientes', async(req, res) => {
     try{
         const values = await pool.query(
             'SELECT * FROM e01_cliente'
@@ -159,8 +111,8 @@ app.get('/clients', async(req, res) => {
         res.status(500).send()
     }
 })
-//get client
-app.get('clients/:id', async (req, res) => {
+// Get client
+app.get('clientes/:id', async (req, res) => {
     try{
         const { id } = req.params
         const values = await pool.query(
@@ -182,8 +134,8 @@ app.get('clients/:id', async (req, res) => {
 })
 
 
-//delete client
-app.delete('/clients/:id', async (req, res) => {
+// Delete client
+app.delete('/clientes/:id', async (req, res) => {
     try{
         const { id } = req.params
         const resp = await pool.query(
@@ -203,8 +155,8 @@ app.delete('/clients/:id', async (req, res) => {
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
-//create client
-app.post('/clients', async (req, res) => {
+// Create client
+app.post('/clientes', async (req, res) => {
     try{
         const input_check = validate_client(req.body)
 
@@ -224,11 +176,12 @@ app.post('/clients', async (req, res) => {
     }
 })
 
-//update client
-app.put('/clients/:id', async (req, res) => {
+// Update client
+app.put('/clientes/:id', async (req, res) => {
     try {
         const { id }  = req.params
-        const input_check = validate_client_update(req.body)
+        req.body["nro_cliente"] = parseInt(id)
+        const input_check = validate_client(req.body)
 
         if(input_check === ClientCodes.Valid){
             const resp = await pool.query(
@@ -253,8 +206,8 @@ app.put('/clients/:id', async (req, res) => {
     
 })
 
-//create product
-app.post('/products', async (req, res) => {
+// Create product
+app.post('/productos', async (req, res) => {
     try{
         const input_check = validate_product(req.body)
 
@@ -274,11 +227,13 @@ app.post('/products', async (req, res) => {
     }
 })
 
-//update product
-app.put('/products/:id', async (req, res) => {
+// Update product
+app.put('/productos/:id', async (req, res) => {
     try{
         const { id } = req.params
-        const input_check = validate_product_update(req.body)
+        req.body["codigo_producto"] = parseInt(id)
+
+        const input_check = validate_product(req.body)
 
         if(input_check === ProductCodes.Valid){
             const resp = await pool.query(
@@ -302,7 +257,7 @@ app.put('/products/:id', async (req, res) => {
     }
 })
 
-// Inicio el servidor
+//  = - = - = - = - = Inicio el servidor = - = - = - = - =
 app.listen(
     PORT,
     () => {console.log(`Server running at: http://localhost:${PORT}`)}
