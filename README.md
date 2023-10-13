@@ -1,25 +1,73 @@
-# TP-Parte-I---BD2
-## Primera parte del TP de la materia BD2 (sql)
+# TPO - BD2
+### Integrantes: 
+- Máximo Rojas Pelliccia
+- Marcos Casiraghi
+- Marcos Gronda
 
-El archivo tp-queries.sql contiene las sentencias para las preguntas del ejercicio 1.
-El archivo tp-views-queries.sql contiene las sentencias para las preguntas del ejercicio 2.
+## Requisitos:
+1) PostgreSQL
+2) Node JS 
+3) npm
+
+## Setup inicial
+1) Correr base de datos postgreSQL.
+2) Clonar repositorio.
+2) Ejecutar el archivo "ITBA_2023_esquema_facturacion.sql" para generar el Schema y poblar la base de datos.
+
+## Queries y vistas requeridas (Parte 1 - SQL)
+- Las queries correspondientes a este ejercicio están en el archivo "tp-queries.sql"
+- Las vistas correspondientes a etse ejercicio están en el archivo "tp-views-queries.sql"
 
 ## Ejecucion de API
-Ya con una base de datos postgreSQL corriendo, ejecutar el archivo "ITBA_2023_esquema_facturacion.sql" para generar el Schema y poblar la base de datos.
 La api fue desarrollada con node.js, pg y express por lo que se deben instalar el respectivo runtime environment y sus modulos.
-Instrucciones de instalacion y ejecución.
-1) Clonar el repositorio localmente.
-2) Instalar postgreSQL o tener una imagen y contenedor localmente como por ejemplo en docker.
-3) Ejecutar el archivo "ITBA_2023_esquema_facturacion.sql" para crear el schema y poblar la BD.
-4) Instalar node.js desde su página web.
-5) Posicionarse en el directorio "api" y ejecutar el comando "npm install".
-6) Utilizar el archivo "config.json" para configurar la base de datos postgreSQL que esté utilizando.
-7) Para ejecutar la api, correr desde una terminal el comando "node ."   .
 
-###Queries requeridas:
-Las queries correspondientes a este ejercicio están en el archivo "tp-queries.sql"
-###Vistas requeridas:
-Las vistas correspondientes a etse ejercicio están en el archivo "tp-views-queries.sql"
-###Api:
-Los endpoints se encuentran index.js. Uno es "/clientes" y otro es "/productos".
+1) Posicionarse en el directorio "api" y ejecutar el comando "npm install".
+2) Utilizar el archivo "config.json" para configurar la base de datos postgreSQL que esté utilizando. [ Ver tabla 1 ]
+3) Correr desde una terminal el comando "node ." para inicar la API
+
+## Tabla 1: configuracion de API
+| Nombre            | Descripcion                                    | Valor aceptado                  |
+|-------------------|------------------------------------------------|---------------------------------|
+| port              | El puerto que en donde se levanta el servidor. | Valor numerico entero positivo. |
+| postgres.user     | Usuario de postgres de la base local.          | Cadena de caracteres.           |
+| postgres.password | Contrasena del usuario postgres.               | Cadena de caracteres.           |
+| postgres.host     | IP en donde se encuentra la base de datos.     | Cadena de caracteres.           |
+| postgres.port     | Puerto en cual se encuentra la base de datos.  | Cadena de caracteres.           |
+| postgres.database | Nombre de base de datos.                       | Cadena de caracteres.           |
+
+## Tabla 2: Endpoints de API
+| Path            | Metodo HTTP | Descripcion                                               | 
+|-----------------|-------------|-----------------------------------------------------------|
+| /clientes       | GET         | Se obtiene una lista de todos los clientes con sus datos. |
+| /clientes       | POST        | Se crea un nuevo cliente.                                 | 
+| /clientes/{id}  | GET         | Se obtiene un cliente con sus datos, dado su id.          |
+| /clientes/{id}  | DELETE      | Se elimina un cliente, dado su id.                        |
+| /clientes/{id}  | PUT         | Se reemplazan los datos de un cliente, dado su id.        |
+| /productos      | POST        | Se crea un nuevo producto.                                | 
+| /productos/{id} | PUT         | Se reemplazan los datos de un producto, dado su id.       |
+
+## Tabla 3: Formatos aceptados para POST y PUT para _clientes_
+
+- Se espera una objeto JSON con los siguientes valores:
+
+| Nombre      | Valor aceptado                                 |
+|-------------|------------------------------------------------|
+| nro_cliente | Entero positivo.                               |
+| nombre      | Cadena de caracteres, con longitud menor a 44. |
+| apellido    | Cadena de caracteres, con longitud menor a 44. |
+| direccion   | Cadena de caracteres, con longitud menor a 44. |
+| activo      | Entero positivo perteneciente a {0,1}          |
+
+## Tabla 4: Formatos aceptados para POST y PUT para _productos_
+
+- Se espera una objeto JSON con los siguientes valores:
+
+| Nombre      | Valor aceptado                                 |
+|-------------|------------------------------------------------|
+| marca       | Cadena de caracteres, con longitud menor a 44. |
+| nombre      | Cadena de caracteres, con longitud menor a 44. |
+| descripcion | Cadena de caracteres, con longitud menor a 44. |
+| precio      | Punto flotante mayor a 0.                      |
+| stock       | Entero positivo.                               |
+
 
