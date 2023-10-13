@@ -108,7 +108,7 @@ app.get('/clientes', async(req, res) => {
         res.json(values.rows)
 
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(500).send()
     }
 })
@@ -129,7 +129,7 @@ app.get('clientes/:id', async (req, res) => {
         }
 
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(500).send()
     }
 })
@@ -152,7 +152,7 @@ app.delete('/clientes/:id', async (req, res) => {
         }
 
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
@@ -172,7 +172,7 @@ app.post('/clientes', async (req, res) => {
             res.status(400).send({respuesta: input_check[MESSAGE]})
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
@@ -201,7 +201,7 @@ app.put('/clientes/:id', async (req, res) => {
         }
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto  
     }
     
@@ -223,7 +223,7 @@ app.post('/productos', async (req, res) => {
             res.status(400).send({respuesta: input_check[MESSAGE]})
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
@@ -253,7 +253,7 @@ app.put('/productos/:id', async (req, res) => {
         }
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
