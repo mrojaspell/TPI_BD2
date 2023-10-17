@@ -1,0 +1,51 @@
+// Ej 1
+db.cliente.findOne({"nombre":"Wanda", "apellido": "Baker"}, {"nro_cliente": 1, "telefonos": 1 })
+
+// Ej 2
+db.cliente.aggregate([{
+    $match: {nro_cliente: {$in: db.factura.distinct("nro_cliente")}}
+}])
+
+// Ej 3
+db.cliente.aggregate([{
+    $match: {nro_cliente: {$nin: db.factura.distinct("nro_cliente")}}
+}])
+
+// Ej 4
+db.producto.aggregate([{
+    $match: {codigo_producto: {$in: db.factura.distinct("detalles.codigo_producto")}}
+}])
+
+// Ej 5
+db.cliente.find()
+
+// Ej 6
+db.cliente.aggregate([
+  {
+    $lookup: {
+      from: "factura",
+      localField: "nro_cliente",
+      foreignField: "nro_cliente",
+      as: "facturas"
+    }
+  },
+  {
+    $project: {
+      nro_cliente: 1,
+      nombre: 1,
+      apellido: 1,
+      direccion: 1,
+      activo: 1,
+      cantidad_facturas: { $size: "$facturas" }
+    }
+  }
+])
+
+// TODO: check lo de admitir nulos
+
+// Ej 7
+db.factura.aggregate([{
+    $match: {nro_cliente: {$eq: db.cliente.findOne({"nombre": "Pandora", "apellido": "Tate"}, {"nro_cliente": 1}).nro_cliente}}
+}])
+
+
