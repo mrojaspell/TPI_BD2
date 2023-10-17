@@ -3,11 +3,11 @@ const MongoClient = require('mongodb').MongoClient;
 
 async function  migration(){
     const pool = new Pool({
-        "user": "postgres",
-        "password": "6mvRXM58J9",
+        "user": "root",
+        "password": "root",
         "host": "localhost",
-        "port": "4321",
-        "database": "postgres"
+        "port": "5432",
+        "database": "bd2"
     })
 
     // Obtenemos los clientes
@@ -57,6 +57,7 @@ async function  migration(){
         if( ! Object.hasOwn(billMap, info['nro_factura'])){
             billMap[info['nro_factura']] = {
                 "nro_factura": info['nro_factura'],
+                'nro_cliente': info['nro_cliente'],
                 "fecha": info['fecha'],
                 "total_sin_iva": info['total_sin_iva'],
                 "iva": info['iva'],
