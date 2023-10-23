@@ -1,14 +1,10 @@
 const Pool = require("pg").Pool;
 const MongoClient = require('mongodb').MongoClient;
 
+const config = require('./config.json')
+
 async function  migration(){
-    const pool = new Pool({
-        "user": "root",
-        "password": "root",
-        "host": "localhost",
-        "port": "5432",
-        "database": "bd2"
-    })
+    const pool = new Pool(config["postgres"])
 
     // Obtenemos los clientes
 
@@ -93,10 +89,10 @@ async function  migration(){
     const productList = productInfo.rows
 
     // Replace the connection URL with your MongoDB server URL
-    const url = 'mongodb://localhost:27017/';
+    const url = `mongodb://${config["mongodb"]["host"]}:${config["mongodb"]["port"]}/`;
 
     // Replace 'your_database_name' with your actual database name
-    const dbName = 'Mymongo';
+    const dbName = config["mongodb"]["database"];
 
     // Connect to the MongoDB server
     const client = await MongoClient.connect(url);

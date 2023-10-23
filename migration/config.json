@@ -1,0 +1,14 @@
+{
+  "postgres": {
+    "user": "postgres",
+    "password": "basededatos2",
+    "host": "localhost",
+    "port": "5432",
+    "database": "postgres"
+  },
+  "mongodb": {
+    "host": "localhost",
+    "port": "27017",
+    "database": "TPO"
+  }
+}
