@@ -88,6 +88,19 @@ db.cliente.aggregate([
     }
 ])
 
+//Vistas
+//Consultas
 
+// 1
+db.factura.find().sort({fecha:1})
+
+//2
+db.producto.aggregate([
+    {
+        $match: {
+            codigo_producto: {$nin: db.factura.distinct("detalles.codigo_producto") }
+        }
+    }
+])
 
 
