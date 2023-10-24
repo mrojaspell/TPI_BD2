@@ -48,4 +48,46 @@ db.factura.aggregate([{
     $match: {nro_cliente: {$eq: db.cliente.findOne({"nombre": "Pandora", "apellido": "Tate"}, {"nro_cliente": 1}).nro_cliente}}
 }])
 
+// Ej 8
+db.factura.aggregate([
+  {
+    $lookup: {
+      from: "producto",
+      localField: "detalles.codigo_producto",
+      foreignField: "codigo_producto",
+      as: "productInfo"
+    }
+  },
+  {
+    $match: {
+      "productInfo.marca": "In Faucibus Inc."
+    }
+  }
+])
+
+//9
+db.cliente.find()
+
+//10
+db.cliente.aggregate([
+    {
+        $lookup: {
+            from: "factura",
+            localField: "nro_cliente",
+            foreignField: "nro_cliente",
+            as: "cliente_facturas"
+        }
+    },
+    {
+        $project: {
+          _id: 0,
+          nombre: 1,
+          apellido: 1,
+          total_con_iva: { $sum: "$cliente_facturas.total_con_iva" }
+        }
+    }
+])
+
+
+
 
