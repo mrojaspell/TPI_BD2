@@ -70,4 +70,22 @@ La api fue desarrollada con node.js, pg y express por lo que se deben instalar e
 | precio      | Punto flotante mayor a 0.                      |
 | stock       | Entero positivo.                               |
 
+## Migración de Datos de PSQL a Mongo
+En el repositorio se encuentra el archivo migration.mongodb dentro de la carpeta de migration que cuenta con las queries necesarias para popular la base de datos de Mongo.
+
+De todas formas, existe un script que puede realizar una migración real time. 
+
+Estos son los pasos necesarios para realizarlo:
+
+1)  Tener corriendo las imágenes de ambas base de datos
+2)  En el archivo config.json de la carpeta de migration, completar los campos que figuran en la tabla 1 con los respectivos de su imagen de psql. Asi mismo, completar los campos "host", "port" y "database" con los de la imagen de mongo.
+3)  En una terminal situada en la carpeta migration, correr los siguientes comandos:
+```
+npm install
+node .
+```
+
+Este ultimo comando puede llegar a tardar unos segundos pero una vez realizado la base de datos de Mongo va a estar cargada con los mismos datos que se encuentran en el archivo mencionado previamente.
+
+
 
