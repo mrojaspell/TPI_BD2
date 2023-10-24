@@ -56,8 +56,8 @@ FROM e01_telefono NATURAL JOIN e01_cliente;
 
 -- 10. Mostrar nombre y apellido de cada cliente junto con lo que
 -- gastó en total (con IVA incluido).
-SELECT nombre, apellido, sum(total_con_iva) as gasto_total_con_IVA
-FROM e01_cliente natural join e01_factura
-GROUP BY nro_cliente, nombre, apellido;
+SELECT nombre, apellido, sum(coalesce(total_con_iva, 0)) as gasto_total_con_IVA
+FROM e01_cliente c left join e01_factura f on c.nro_cliente = f.nro_cliente
+GROUP BY c.nro_cliente, nombre, apellido;
 
 
