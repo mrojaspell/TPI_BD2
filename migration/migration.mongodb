@@ -1,3 +1,7 @@
+db.cliente.createIndex({ nro_cliente: 1}, {unique: true});
+db.producto.createIndex({ codigo_producto: 1}, {unique: true});
+db.factura.createIndex({ nro_factura: 1}, {unique: true});
+
 db.cliente.insertMany([
 {
   nro_cliente: 1,

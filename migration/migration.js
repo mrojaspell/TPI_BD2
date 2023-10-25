@@ -91,11 +91,14 @@ async function  migration(){
     const client = await MongoClient.connect(`mongodb://${config["mongodb"]["host"]}:${config["mongodb"]["port"]}/`);
 
     const db = client.db(config["mongodb"]["database"]);
-    
+
+    await db.collection('cliente').createIndex({ nro_cliente: 1 }, { unique: true });
     await db.collection('cliente').insertMany(clientList)
 
+    await db.collection('producto').createIndex({ codigo_producto: 1 }, { unique: true });
     await db.collection('producto').insertMany(productList)
         
+    await db.collection('factura').createIndex({ nro_factura: 1 }, { unique: true });
     await db.collection('factura').insertMany(billList)
     
     // Close the MongoDB connection when you're done
