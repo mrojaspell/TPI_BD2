@@ -88,16 +88,9 @@ async function  migration(){
     )
     const productList = productInfo.rows
 
-    // Replace the connection URL with your MongoDB server URL
-    const url = `mongodb://${config["mongodb"]["host"]}:${config["mongodb"]["port"]}/`;
+    const client = await MongoClient.connect(`mongodb://${config["mongodb"]["host"]}:${config["mongodb"]["port"]}/`);
 
-    // Replace 'your_database_name' with your actual database name
-    const dbName = config["mongodb"]["database"];
-
-    // Connect to the MongoDB server
-    const client = await MongoClient.connect(url);
-
-    const db = client.db(dbName);
+    const db = client.db(config["mongodb"]["database"]);
     
     await db.collection('cliente').insertMany(clientList)
 

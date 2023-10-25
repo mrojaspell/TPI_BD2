@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const config = require('./config.json')
-const pool = require('./db')
+const getClient = require('./db')
 
 // Aplicamos Json middleware: convierte el body de las request a JSON
 app.use(express.json())
@@ -100,13 +100,20 @@ function validate_client(body){
 
 // Get all clients
 app.get('/clientes', async(req, res) => {
+    const client = await getClient()
+
     try{
-        const values = await pool.query(
-            'SELECT * FROM e01_cliente'
-        );
+        if(config["database"] === "postgres"){
 
-        res.json(values.rows)
+            const values = await client.query(
+                'SELECT * FROM e01_cliente'
+            );
+            res.json(values.rows)
 
+        }else if(config["database"] === "mongodb"){
+            const values = await client.collection("cliente").find({}, {projection: {_id: 0, nro_cliente: 1, nombre: 1, apellido: 1, direccion: 1, activo: 1}}).toArray();
+            res.json(values)
+        }
     } catch (e) {
         console.error(e)
         res.status(500).send()
