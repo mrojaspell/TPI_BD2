@@ -242,6 +242,7 @@ app.post('/clientes', async (req, res) => {
             }else if(config["database"] === "mongodb"){
                 await client.collection("cliente").insertOne(req.body)
                 res.status(200).send({respuesta: req.body})
+                //TODO - Como informar que no se pudo insertar?
             }
         }else{
             res.status(400).send({respuesta: input_check[MESSAGE]})
@@ -254,21 +255,33 @@ app.post('/clientes', async (req, res) => {
 
 // Update client
 app.put('/clientes/:id', async (req, res) => {
+    const client = await getClient()
     try {
         const { id }  = req.params
         req.body["nro_cliente"] = parseInt(id)
         const input_check = validate_client(req.body)
 
         if(input_check === ClientCodes.Valid){
-            const resp = await pool.query(
-                'UPDATE e01_cliente SET nombre = $2, apellido = $3, direccion = $4, activo = $5 WHERE nro_cliente = $1',
-                [id, req.body['nombre'], req.body['apellido'], req.body['direccion'], req.body['activo']]
-            )
-            if(resp.rowCount === 1){
-                res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
-            }
-            else{
-                res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+            if(config["database"] === "postgres"){
+                const resp = await client.query(
+                    'UPDATE e01_cliente SET nombre = $2, apellido = $3, direccion = $4, activo = $5 WHERE nro_cliente = $1',
+                    [id, req.body['nombre'], req.body['apellido'], req.body['direccion'], req.body['activo']]
+                )
+                if(resp.rowCount === 1){
+                    res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
+                }
+                else{
+                    res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+                }
+            }else if(config["database"] === "mongodb"){
+                const resp = await client.collection("cliente").updateOne({nro_cliente: Number(id)}, {$set: req.body})
+                console.log(resp)
+                if(resp["modifiedCount"] === 1){
+                    res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
+                }else{
+                    //puede entrar aca porque no se modifico nada o porque no encontro el cliente
+                    res.status(400).send({respuesta: `Cliente con nro_cliente: ${id} no se actualizo.`})
+                }
             }
         }
         else{
