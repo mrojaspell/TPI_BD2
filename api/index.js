@@ -111,7 +111,7 @@ app.get('/clientes', async(req, res) => {
             res.json(values.rows)
 
         }else if(config["database"] === "mongodb"){
-            const values = await client.collection("cliente").find({}, {projection: {_id: 0, nro_cliente: 1, nombre: 1, apellido: 1, direccion: 1, activo: 1}}).toArray();
+            const values = await client.collection("cliente").find({}, {projection: {_id: 0, nro_cliente: 1, nombre: 1, apellido: 1, direccion: 1, activo: 1, telefonos: 1}}).toArray();
             res.json(values)
         }
     } catch (e) {
@@ -120,21 +120,33 @@ app.get('/clientes', async(req, res) => {
     }
 })
 // Get client
-app.get('clientes/:id', async (req, res) => {
+app.get('/clientes/:id', async (req, res) => {
+    const client = await getClient()
     try{
-        const { id } = req.params
-        const values = await pool.query(
-            'SELECT * FROM e01_cliente WHERE nro_cliente = $1', [
-                id
-            ]
-        )
-        if(values.rowCount === 1){
-            res.json(values.rows[0])
-        }
-        else{
-            res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
-        }
+        if(config["database"] === "postgres"){
+            const { id } = req.params
+            const values = await client.query(
+                'SELECT * FROM e01_cliente WHERE nro_cliente = $1', [
+                    id
+                ]
+            );
+            if(values.rowCount === 1){
+                res.json(values.rows[0])
+            }
+            else{
+                res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+            }
 
+        }else if(config["database"] === "mongodb"){
+            const { id } = req.params
+            const values = await client.collection("cliente").find({nro_cliente: Number(id)}, {projection: {_id: 0, nro_cliente: 1, nombre: 1, apellido: 1, direccion: 1, activo: 1, telefonos: 1}}).toArray();
+            if( values.length === 1){
+                res.json(values[0])
+            }else{
+                res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+            }
+            
+        }
     } catch (e) {
         console.error(e)
         res.status(500).send()
