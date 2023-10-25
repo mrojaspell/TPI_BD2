@@ -249,6 +249,10 @@ app.post('/clientes', async (req, res) => {
         }        
     } catch (e) {
         console.error(e)
+        //codigo de error para duplicate key de mongo
+        if( e.code === 11000){
+            res.status(400).send({respuesta: `Cliente con nro_cliente: ${req.body['nro_cliente']} ya existe.`})
+        }
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
@@ -318,6 +322,10 @@ app.post('/productos', async (req, res) => {
         }
     } catch (e) {
         console.error(e)
+        //codigo de error para duplicate key de mongo
+        if( e.code === 11000){
+            res.status(400).send({respuesta: `Producto con codigo_producto: ${req.body['codigo_producto']} ya existe.`})
+        }
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
