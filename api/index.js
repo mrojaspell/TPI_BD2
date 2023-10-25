@@ -275,12 +275,11 @@ app.put('/clientes/:id', async (req, res) => {
                 }
             }else if(config["database"] === "mongodb"){
                 const resp = await client.collection("cliente").updateOne({nro_cliente: Number(id)}, {$set: req.body})
-                console.log(resp)
                 if(resp["modifiedCount"] === 1){
                     res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
                 }else{
                     //puede entrar aca porque no se modifico nada o porque no encontro el cliente
-                    res.status(400).send({respuesta: `Cliente con nro_cliente: ${id} no se actualizo.`})
+                    res.status(400).send({respuesta: `Cliente con nro_cliente: ${id} no existe o no se actualizo.`})
                 }
             }
         }
@@ -297,15 +296,22 @@ app.put('/clientes/:id', async (req, res) => {
 
 // Create product
 app.post('/productos', async (req, res) => {
+    const client = await getClient()
     try{
         const input_check = validate_product(req.body)
 
         if(input_check === ProductCodes.Valid){
-            await pool.query(
-                'INSERT INTO e01_producto(codigo_producto, marca, nombre, descripcion, precio, stock) VALUES ($1, $2, $3, $4, $5, $6)',
-                [req.body['codigo_producto'], req.body['marca'], req.body['nombre'], req.body['descripcion'], req.body['precio'], req.body['stock']]
-            )
-            res.status(200).send({respuesta: req.body})
+            if(config["database"] === "postgres"){
+                await client.query(
+                    'INSERT INTO e01_producto(codigo_producto, marca, nombre, descripcion, precio, stock) VALUES ($1, $2, $3, $4, $5, $6)',
+                    [req.body['codigo_producto'], req.body['marca'], req.body['nombre'], req.body['descripcion'], req.body['precio'], req.body['stock']]
+                )
+                res.status(200).send({respuesta: req.body})
+            }else if(config["database"] === "mongodb"){
+                await client.collection("producto").insertOne(req.body)
+                res.status(200).send({respuesta: req.body})
+                //TODO - Como informar que no se pudo insertar por que ya existe uno con ese codigo?
+            }
         }
         else{
             res.status(400).send({respuesta: input_check[MESSAGE]})
@@ -318,6 +324,7 @@ app.post('/productos', async (req, res) => {
 
 // Update product
 app.put('/productos/:id', async (req, res) => {
+    const client = await getClient()
     try{
         const { id } = req.params
         req.body["codigo_producto"] = parseInt(id)
@@ -325,15 +332,24 @@ app.put('/productos/:id', async (req, res) => {
         const input_check = validate_product(req.body)
 
         if(input_check === ProductCodes.Valid){
-            const resp = await pool.query(
-                'UPDATE e01_producto SET marca = $2, nombre = $3, descripcion = $4, precio = $5, stock = $6 WHERE codigo_producto = $1',
-                [id, req.body['marca'], req.body['nombre'], req.body['descripcion'], req.body['precio'], req.body['stock']]
-            )
-            if(resp.rowCount === 1){
-                res.status(200).send({respuesta: `Producto: ${id} actualizado.`})
-            }
-            else{
-                res.status(400).send({respuesta: `codigo_producto: ${id} es invalido.`})
+            if(config["database"] === "postgres"){
+                const resp = await client.query(
+                    'UPDATE e01_producto SET marca = $2, nombre = $3, descripcion = $4, precio = $5, stock = $6 WHERE codigo_producto = $1',
+                    [id, req.body['marca'], req.body['nombre'], req.body['descripcion'], req.body['precio'], req.body['stock']]
+                )
+                if(resp.rowCount === 1){
+                    res.status(200).send({respuesta: `Producto: ${id} actualizado.`})
+                }
+                else{
+                    res.status(400).send({respuesta: `codigo_producto: ${id} es invalido.`})
+                }
+            }else if(config["database"] === "mongodb"){
+                const resp = await client.collection("producto").updateOne({codigo_producto: Number(id)}, {$set: req.body})
+                if(resp["modifiedCount"] === 1){
+                    res.status(200).send({respuesta: `Producto: ${id} actualizado.`})
+                }else{
+                    res.status(400).send({respuesta: `Producto con codigo_producto: ${id} no existe o no se actualizo.`})
+                }
             }
         }
         else{
