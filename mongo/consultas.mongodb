@@ -1,20 +1,16 @@
+// = = = = = = = =  Consultas  = = = = = = = =
+
 // Ej 1
 db.cliente.findOne({"nombre":"Wanda", "apellido": "Baker"}, {"nro_cliente": 1, "telefonos": 1 })
 
 // Ej 2
-db.cliente.aggregate([{
-    $match: {nro_cliente: {$in: db.factura.distinct("nro_cliente")}}
-}])
+db.cliente.find({nro_cliente: {$in: db.factura.distinct("nro_cliente")}}, {_id: 0})
 
 // Ej 3
-db.cliente.aggregate([{
-    $match: {nro_cliente: {$nin: db.factura.distinct("nro_cliente")}}
-}])
+db.cliente.find({nro_cliente: {$nin: db.factura.distinct("nro_cliente")}}, {_id: 0})
 
 // Ej 4
-db.producto.aggregate([{
-    $match: {codigo_producto: {$in: db.factura.distinct("detalles.codigo_producto")}}
-}])
+db.producto.find({codigo_producto: {$in: db.factura.distinct("detalles.codigo_producto")}}, {_id: 0})
 
 // Ej 5
 db.cliente.find()
@@ -31,6 +27,7 @@ db.cliente.aggregate([
   },
   {
     $project: {
+      _id: 0,
       nro_cliente: 1,
       nombre: 1,
       apellido: 1,
@@ -41,12 +38,8 @@ db.cliente.aggregate([
   }
 ])
 
-// TODO: check lo de admitir nulos
-
 // Ej 7
-db.factura.aggregate([{
-    $match: {nro_cliente: {$eq: db.cliente.findOne({"nombre": "Pandora", "apellido": "Tate"}, {"nro_cliente": 1}).nro_cliente}}
-}])
+db.factura.find({nro_cliente: db.cliente.findOne({"nombre": "Pandora", "apellido": "Tate"}, {"nro_cliente": 1}).nro_cliente})
 
 // Ej 8
 db.factura.aggregate([
@@ -59,16 +52,17 @@ db.factura.aggregate([
     }
   },
   {
-    $match: {
-      "productInfo.marca": "In Faucibus Inc."
-    }
+    $match: {"productInfo.marca": "In Faucibus Inc."}
+  },
+  {
+    $project: {_id: 0, detalles: 1, fecha: 1, iva: 1, nro_cliente: 1, nro_factura: 1, total_con_iva: 1, total_sin_iva: 1}
   }
 ])
 
-//9
+// Ej 9
 db.cliente.find()
 
-//10
+// Ej 10
 db.cliente.aggregate([
     {
         $lookup: {
@@ -88,19 +82,12 @@ db.cliente.aggregate([
     }
 ])
 
-//Vistas
-//Consultas
+// = = = = = = = =  Vistas  = = = = = = = =
 
-// 1
+// Ej 1
 db.factura.find().sort({fecha:1})
 
-//2
-db.producto.aggregate([
-    {
-        $match: {
-            codigo_producto: {$nin: db.factura.distinct("detalles.codigo_producto") }
-        }
-    }
-])
+// Ej 2
+db.producto.find({codigo_producto: {$nin: db.factura.distinct("detalles.codigo_producto") }})
 
 
