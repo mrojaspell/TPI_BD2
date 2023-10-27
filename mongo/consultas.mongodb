@@ -85,9 +85,11 @@ db.cliente.aggregate([
 // = = = = = = = =  Vistas  = = = = = = = =
 
 // Ej 1
-db.factura.find().sort({fecha:1})
+db.createView("ordered_bills", "factura", [{$sort: {fecha: 1}}])
 
 // Ej 2
-db.producto.find({codigo_producto: {$nin: db.factura.distinct("detalles.codigo_producto") }})
+db.createView("unbilled_products", "producto", [
+    {$match: {codigo_producto: {$nin: db.factura.distinct("detalles.codigo_producto") }}}
+])
 
 
