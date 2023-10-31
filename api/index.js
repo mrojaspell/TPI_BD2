@@ -65,43 +65,36 @@ function validate_client(body){
     if(typeof(body['activo']) !== 'number' || (body['activo'] !== 0 && body['activo'] !== 1)){
         return ClientCodes.InvalidActiveType;
     }
-    if(config["database"] === "mongodb"){
-        if (body['telefonos'] === undefined) {
-            // Handle the error for missing 'telefonos' field
-            return ClientCodes.InvalidTelephoneArray;
-        } else {
-            // Check if 'telefonos' is an array
-            if (!Array.isArray(body['telefonos'])) {
-                // Handle the error for 'telefonos' not being an array
-                return ClientCodes.InvalidTelephoneArray;
-            } else {
-                // Iterate through the 'telefonos' array and validate each object
-                for (const telefono of body['telefonos']) {
-                    if (typeof telefono !== 'object' || telefono === null) {
-                        // Handle the error for an invalid 'telefono' object
-                        return ClientCodes.InvalidTelephoneContact;
-                    }
-                    // Check for the required attributes in each 'telefono' object
-                    if (
-                        telefono['codigo_area'] === undefined ||
-                        telefono['nro_telefono'] === undefined ||
-                        telefono['tipo'] === undefined
-                    ) {
-                        // Handle the error for missing attributes in 'telefono'
-                        return ClientCodes.InvalidTelephoneContact;
-                    }
-                    
-                    // Check data types of the attributes
-                    if (
-                        typeof telefono['codigo_area'] !== 'number' ||
-                        typeof telefono['nro_telefono'] !== 'number' ||
-                        typeof telefono['tipo'] !== 'string' ||
-                        telefono['tipo'].length !== 1
-                    ) {
-                        // Handle the error for invalid data types
-                        return ClientCodes.InvalidTelephoneContactType;
-                    }
-                }
+    // Check if 'telefonos' is an array
+    if (body['telefonos'] != undefined && !Array.isArray(body['telefonos'])) {
+        // Handle the error for 'telefonos' not being an array
+        return ClientCodes.InvalidTelephoneArray;
+    } else if(body['telefonos'] != undefined){
+        // Iterate through the 'telefonos' array and validate each object
+        for (const telefono of body['telefonos']) {
+            if (typeof telefono !== 'object' || telefono === null) {
+                // Handle the error for an invalid 'telefono' object
+                return ClientCodes.InvalidTelephoneContact;
+            }
+            // Check for the required attributes in each 'telefono' object
+            if (
+                telefono['codigo_area'] === undefined ||
+                telefono['nro_telefono'] === undefined ||
+                telefono['tipo'] === undefined
+            ) {
+                // Handle the error for missing attributes in 'telefono'
+                return ClientCodes.InvalidTelephoneContact;
+            }
+            
+            // Check data types of the attributes
+            if (
+                typeof telefono['codigo_area'] !== 'number' ||
+                typeof telefono['nro_telefono'] !== 'number' ||
+                typeof telefono['tipo'] !== 'string' ||
+                telefono['tipo'].length !== 1
+            ) {
+                // Handle the error for invalid data types
+                return ClientCodes.InvalidTelephoneContactType;
             }
         }
     }
@@ -238,6 +231,14 @@ app.post('/clientes', async (req, res) => {
                     'INSERT INTO e01_cliente(nro_cliente, nombre, apellido, direccion, activo) VALUES ($1, $2, $3, $4, $5)',
                     [req.body['nro_cliente'], req.body['nombre'], req.body['apellido'], req.body['direccion'], req.body['activo']]
                 )
+                if( req.body['telefonos'] !== undefined){
+                    for (const telefono of req.body['telefonos']) {
+                        await client.query(
+                            'INSERT INTO e01_telefono(codigo_area, nro_telefono, tipo, nro_cliente) VALUES ($1, $2, $3, $4)',
+                            [telefono['codigo_area'], telefono['nro_telefono'], telefono['tipo'], req.body['nro_cliente']]
+                        )
+                    }
+                }
                 res.status(200).send({respuesta: req.body})
             }else if(config["database"] === "mongodb"){
                 await client.collection("cliente").insertOne(req.body)
