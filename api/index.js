@@ -221,6 +221,7 @@ app.delete('/clientes/:id', async (req, res) => {
     const { id } = req.params
     try{
         if( config["database"] === "postgres"){
+            await client.query('DELETE FROM e01_telefono WHERE nro_cliente = $1', [id])
             const resp = await client.query(
                 'DELETE FROM e01_cliente WHERE nro_cliente = $1', [
                     id
