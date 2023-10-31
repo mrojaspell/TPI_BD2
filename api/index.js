@@ -132,6 +132,30 @@ function validate_client(body){
     return ProductCodes.Valid;
  }
 
+function extract_cliente(rows){
+    const clients = {};
+    for(let row of rows){
+        if(!(row.nro_cliente in clients)){
+            clients[row.nro_cliente] = {
+                'nro_cliente': row.nro_cliente,
+                'nombre': row.nombre,
+                'apellido': row.apellido,
+                'direccion': row.direccion,
+                'activo': row.activo,
+                'telefonos': []
+            };
+        }
+        if(row.nro_telefono !== null){
+            clients[row.nro_cliente]['telefonos'].push({
+                'nro_telefono': row.nro_telefono,
+                'codigo_area': row.codigo_area,
+                'tipo': row.tipo
+            });
+        }
+    }
+    return clients;
+}
+
 // = - = - = - = - = Metodos de API = - = - = - = - =
 
 // Get all clients
@@ -142,9 +166,10 @@ app.get('/clientes', async(req, res) => {
         if(config["database"] === "postgres"){
 
             const values = await client.query(
-                'SELECT * FROM e01_cliente'
+                'SELECT * FROM e01_cliente c LEFT JOIN e01_telefono t ON c.nro_cliente = t.nro_cliente'
             );
-            res.json(values.rows)
+
+            res.json(extract_cliente(values.rows))
 
         }else if(config["database"] === "mongodb"){
             const values = await client.collection("cliente").find({}, {projection: {_id: 0, nro_cliente: 1, nombre: 1, apellido: 1, direccion: 1, activo: 1, telefonos: 1}}).toArray();
