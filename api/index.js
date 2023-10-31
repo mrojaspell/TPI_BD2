@@ -62,7 +62,7 @@ function validate_client(body){
     if(body['direccion'].length > 44){
         return ClientCodes.InvalidAddressLength;
     }
-    if(typeof(body['activo']) !== 'number' || (body['activo'] !== 0 && body['activo'] !== 1)){
+    if(typeof(body['activo']) !== 'number'){
         return ClientCodes.InvalidActiveType;
     }
     // Check if 'telefonos' is an array
