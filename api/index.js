@@ -297,11 +297,20 @@ app.put('/clientes/:id', async (req, res) => {
                     'UPDATE e01_cliente SET nombre = $2, apellido = $3, direccion = $4, activo = $5 WHERE nro_cliente = $1',
                     [id, req.body['nombre'], req.body['apellido'], req.body['direccion'], req.body['activo']]
                 )
+                await client.query('DELETE FROM e01_telefono WHERE nro_cliente = $1', [id])
+                if( req.body['telefonos'] !== undefined){
+                    for (const telefono of req.body['telefonos']) {
+                        await client.query(
+                            'INSERT INTO e01_telefono(codigo_area, nro_telefono, tipo, nro_cliente) VALUES ($1, $2, $3, $4)',
+                            [telefono['codigo_area'], telefono['nro_telefono'], telefono['tipo'], req.body['nro_cliente']]
+                        )
+                    }
+                }
                 if(resp.rowCount === 1){
                     res.status(200).send({respuesta: `Cliente: ${id} actualizado.`})
                 }
                 else{
-                    res.status(400).send({respuesta: `nro_cliente: ${id} es invalido.`})
+                    res.status(400).send({respuesta: `nro_cliente: ${id} es invalido o no se modifico.`})
                 }
             }else if(config["database"] === "mongodb"){
                 const resp = await client.collection("cliente").updateOne({nro_cliente: Number(id)}, {$set: req.body})
