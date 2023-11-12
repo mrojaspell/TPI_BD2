@@ -1,6 +1,4 @@
--- 1. Obtener el teléfono y el número de cliente del cliente con
--- nombre “Wanda” y apellido “Baker”.
-
+-- 1. Obtener el teléfono y el número de cliente del cliente con nombre “Wanda” y apellido “Baker”.
 SELECT T.nro_telefono, C.nro_cliente
 FROM E01_TELEFONO T JOIN E01_CLIENTE C ON T.nro_cliente = C.nro_cliente
 WHERE C.nombre = 'Wanda' AND C.apellido = 'Baker';
@@ -25,8 +23,8 @@ WHERE codigo_producto IN (SELECT codigo_producto
 
 -- 5. Seleccionar los datos de los clientes junto con sus teléfonos
 SELECT *
-FROM e01_cliente NATURAL JOIN e01_telefono
-ORDER BY nro_cliente;
+FROM e01_cliente c LEFT JOIN e01_telefono t ON c.nro_cliente = t.nro_cliente
+ORDER BY c.nro_cliente;
 
 -- 6. Devolver todos los clientes, con la cantidad de facturas que
 -- tienen registradas (admitir nulos en valores de Clientes)
