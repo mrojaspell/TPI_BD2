@@ -243,7 +243,7 @@ app.delete('/clientes/:id', async (req, res) => {
         }
     } catch (e) {
         console.error(e)
-        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
+        res.status(400).send({respuesta: e.detail})
     }
 })
 // Alta de un cliente
@@ -269,7 +269,6 @@ app.post('/clientes', async (req, res) => {
             }else if(config["database"] === "mongodb"){
                 await client.collection("cliente").insertOne(req.body)
                 res.status(200).send({respuesta: req.body})
-                //TODO - Como informar que no se pudo insertar?
             }
         }else{
             res.status(400).send({respuesta: input_check[MESSAGE]})
@@ -280,7 +279,7 @@ app.post('/clientes', async (req, res) => {
         if( e.code === 11000){
             res.status(400).send({respuesta: `Cliente con nro_cliente: ${req.body['nro_cliente']} ya existe.`})
         }
-        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
+        res.status(400).send({respuesta: e.detail})
     }
 })
 
@@ -329,7 +328,7 @@ app.put('/clientes/:id', async (req, res) => {
     }
     catch (e) {
         console.error(e)
-        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto  
+        res.status(400).send({respuesta: e.detail})
     }
     
 })
@@ -350,7 +349,6 @@ app.post('/productos', async (req, res) => {
             }else if(config["database"] === "mongodb"){
                 await client.collection("producto").insertOne(req.body)
                 res.status(200).send({respuesta: req.body})
-                //TODO - Como informar que no se pudo insertar por que ya existe uno con ese codigo?
             }
         }
         else{
@@ -362,7 +360,7 @@ app.post('/productos', async (req, res) => {
         if( e.code === 11000){
             res.status(400).send({respuesta: `Producto con codigo_producto: ${req.body['codigo_producto']} ya existe.`})
         }
-        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
+        res.status(400).send({respuesta: e.detail})
     }
 })
 
@@ -402,7 +400,7 @@ app.put('/productos/:id', async (req, res) => {
     }
     catch (e) {
         console.error(e)
-        res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
+        res.status(400).send({respuesta: e.detail})
     }
 })
 
