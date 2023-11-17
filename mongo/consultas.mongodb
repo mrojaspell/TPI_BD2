@@ -60,7 +60,7 @@ db.factura.aggregate([
 ])
 
 // Ej 9
-db.cliente.find()
+db.cliente.find({"telefonos": { $exists: true, $ne: [] }})
 
 // Ej 10
 db.cliente.aggregate([
