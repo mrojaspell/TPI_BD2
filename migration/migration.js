@@ -101,7 +101,7 @@ async function  migration(){
     await db.collection('factura').createIndex({ nro_factura: 1 }, { unique: true });
     await db.collection('factura').insertMany(billList)
     
-    // Close the MongoDB connection when you're done
+    // Cerramos la conexión cuando terminamos
     client.close();
 }
 

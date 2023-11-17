@@ -38,7 +38,7 @@ const ProductCodes = {
 const MESSAGE = 1
 const CODE = 0
 
-// = - = - = - = - = Funciones de validacion = - = - = - = - =
+// = - = - = - = - = Funciones de validación = - = - = - = - =
 
 function validate_client(body){
     if(typeof(body['nro_cliente']) !== 'number' || body['nro_cliente'] % 1 !== 0){
@@ -65,35 +65,35 @@ function validate_client(body){
     if(typeof(body['activo']) !== 'number'){
         return ClientCodes.InvalidActiveType;
     }
-    // Check if 'telefonos' is an array
+    // Chequear 'telefonos' del cuerpo del json
     if (body['telefonos'] != undefined && !Array.isArray(body['telefonos'])) {
-        // Handle the error for 'telefonos' not being an array
+        // Hay un error
         return ClientCodes.InvalidTelephoneArray;
     } else if(body['telefonos'] != undefined){
-        // Iterate through the 'telefonos' array and validate each object
+        // Leemos los datos de 'telefonos'
         for (const telefono of body['telefonos']) {
             if (typeof telefono !== 'object' || telefono === null) {
-                // Handle the error for an invalid 'telefono' object
+                // Error en los datos de 'telefono'
                 return ClientCodes.InvalidTelephoneContact;
             }
-            // Check for the required attributes in each 'telefono' object
+            // Chequear por correcta estructura de 'telefonos'
             if (
                 telefono['codigo_area'] === undefined ||
                 telefono['nro_telefono'] === undefined ||
                 telefono['tipo'] === undefined
             ) {
-                // Handle the error for missing attributes in 'telefono'
+                // Error en los datos de 'telefono'
                 return ClientCodes.InvalidTelephoneContact;
             }
             
-            // Check data types of the attributes
+            // Chequear los tipos de datos de 'telefono'
             if (
                 typeof telefono['codigo_area'] !== 'number' ||
                 typeof telefono['nro_telefono'] !== 'number' ||
                 typeof telefono['tipo'] !== 'string' ||
                 telefono['tipo'].length !== 1
             ) {
-                // Handle the error for invalid data types
+                // Error en los tipos de datos de 'telefono'
                 return ClientCodes.InvalidTelephoneContactType;
             }
         }
@@ -158,7 +158,7 @@ function extract_cliente(rows){
 
 // = - = - = - = - = Metodos de API = - = - = - = - =
 
-// Get all clients
+// Ver todos los clientes
 app.get('/clientes', async(req, res) => {
     const client = await getClient()
 
@@ -180,7 +180,7 @@ app.get('/clientes', async(req, res) => {
         res.status(500).send()
     }
 })
-// Get client
+// Ver un cliente
 app.get('/clientes/:id', async (req, res) => {
     const client = await getClient()
     try{
@@ -215,7 +215,7 @@ app.get('/clientes/:id', async (req, res) => {
 })
 
 
-// Delete client
+// Baja de cliente
 app.delete('/clientes/:id', async (req, res) => {
     const client = await getClient()
     const { id } = req.params
@@ -246,7 +246,7 @@ app.delete('/clientes/:id', async (req, res) => {
         res.status(400).send({respuesta: e.detail})  // TODO: cambiar esto
     }
 })
-// Create client
+// Alta de un cliente
 app.post('/clientes', async (req, res) => {
     const client = await getClient()
     try{
@@ -284,7 +284,7 @@ app.post('/clientes', async (req, res) => {
     }
 })
 
-// Update client
+// Modificación de un cliente
 app.put('/clientes/:id', async (req, res) => {
     const client = await getClient()
     try {
@@ -334,7 +334,7 @@ app.put('/clientes/:id', async (req, res) => {
     
 })
 
-// Create product
+// Alta de un producto
 app.post('/productos', async (req, res) => {
     const client = await getClient()
     try{
@@ -366,7 +366,7 @@ app.post('/productos', async (req, res) => {
     }
 })
 
-// Update product
+// Modificación de un producto
 app.put('/productos/:id', async (req, res) => {
     const client = await getClient()
     try{

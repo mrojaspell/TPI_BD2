@@ -1,23 +1,3 @@
-\timing
---create database mri2022bd2;
---use mri2022bd2;
-
---
-
--- ER/Studio 8.0 SQL Code Generation
-
--- Project :      01_facturación_x.DM1
-
---
-
--- Date Created : Monday, March 06, 2017 11:18:13
-
--- Target DBMS : IBM DB2 UDB 9.x
-
---
-
-
-
 --
 
 -- TABLE: E01_CLIENTE
@@ -41,13 +21,7 @@ CREATE TABLE E01_CLIENTE(
     CONSTRAINT PK_E01_CLIENTE PRIMARY KEY (nro_cliente)
 
 )
-
 ;
-
-
-
-
-
 
 
 --
@@ -55,8 +29,6 @@ CREATE TABLE E01_CLIENTE(
 -- TABLE: E01_DETALLE_FACTURA
 
 --
-
-
 
 CREATE TABLE E01_DETALLE_FACTURA(
 
@@ -71,14 +43,7 @@ CREATE TABLE E01_DETALLE_FACTURA(
     CONSTRAINT PK_E01_DETALLE_FACTURA PRIMARY KEY (nro_factura, codigo_producto)
 
 )
-
 ;
-
-
-
-
-
-
 
 --
 
@@ -87,16 +52,15 @@ CREATE TABLE E01_DETALLE_FACTURA(
 --
 
 
-
 CREATE TABLE E01_FACTURA(
 
     nro_factura      INTEGER    NOT NULL,
 
     fecha            DATE       NOT NULL,
 
-    total_sin_iva    DOUBLE PRECISION     NOT NULL,
+    total_sin_iva    DOUBLE PRECISION    NOT NULL,
 
-    iva              DOUBLE PRECISION     NOT NULL,
+    iva              DOUBLE PRECISION    NOT NULL,
 
     total_con_iva    DOUBLE PRECISION,
 
@@ -105,14 +69,7 @@ CREATE TABLE E01_FACTURA(
     CONSTRAINT PK_E01_FACTURA PRIMARY KEY (nro_factura)
 
 )
-
 ;
-
-
-
-
-
-
 
 --
 
@@ -139,13 +96,7 @@ CREATE TABLE E01_PRODUCTO(
     CONSTRAINT PK_E01_PRODUCTO PRIMARY KEY (codigo_producto)
 
 )
-
 ;
-
-
-
-
-
 
 
 --
@@ -153,7 +104,6 @@ CREATE TABLE E01_PRODUCTO(
 -- TABLE: E01_TELEFONO
 
 --
-
 
 
 CREATE TABLE E01_TELEFONO(
@@ -169,13 +119,7 @@ CREATE TABLE E01_TELEFONO(
     CONSTRAINT PK_E01_TELEFONO PRIMARY KEY (codigo_area, nro_telefono)
 
 )
-
 ;
-
-
-
-
-
 
 
 --
@@ -184,15 +128,12 @@ CREATE TABLE E01_TELEFONO(
 
 --
 
-
-
 ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_PRODUCTO
     FOREIGN KEY (codigo_producto)
 
     REFERENCES E01_PRODUCTO(codigo_producto)
 
 ;
-
 
 
 ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_FACTURA
@@ -204,16 +145,11 @@ ALTER TABLE E01_DETALLE_FACTURA ADD CONSTRAINT FK_E01_DETALLE_FACTURA_FACTURA
 ;
 
 
-
-
-
 --
 
 -- TABLE: E01_FACTURA
 
 --
-
-
 
 ALTER TABLE E01_FACTURA ADD CONSTRAINT FK_E01_FACTURA_CLIENTE
 
@@ -225,14 +161,11 @@ ALTER TABLE E01_FACTURA ADD CONSTRAINT FK_E01_FACTURA_CLIENTE
 
 
 
-
-
 --
 
 -- TABLE: E01_TELEFONO
 
 --
-
 
 
 ALTER TABLE E01_TELEFONO ADD CONSTRAINT FK_E01_TELEFONO_CLIENTE
@@ -581,7 +514,7 @@ INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock)
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (32,'Montes Nascetur Incorporated','cosmetics','purus. Nullam scelerisque','926.60',203);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (33,'Turpis Nulla Corp.',' drugstore ','pede, nonummy ut,','472.49',496);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (34,'Eu Eleifend Nec Associates','canned goods','orci sem eget','715.37',676);
-INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (35,'Euismod Incorporated',E'chemist\'s ','enim. Nunc ut','762.66',139);
+INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (35,'Euismod Incorporated','chemists ','enim. Nunc ut','762.66',139);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (36,'Congue A Aliquet Corp.','sales assistant','diam nunc, ullamcorper','758.82',778);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (37,'Sed Dui Fusce LLC','coin','eleifend nec, malesuada','282.07',954);
 INSERT INTO E01_PRODUCTO (codigo_producto,marca,nombre,descripcion,precio,stock) VALUES (38,'Arcu Incorporated','bag','justo eu arcu.','53.83',681);
@@ -3115,4 +3048,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CALL calcular_precios () ;
+CALL calcular_precios();
